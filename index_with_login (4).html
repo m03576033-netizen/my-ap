@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta name="theme-color" content="#0d131f">
+
+  <title>حاضر جوابی آلفا</title>
+
+  <style>
+    :root {
+      --bg-color: #0d131f;
+      --card-bg: #162032;
+      --input-bg: #0f172a;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #1e293b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --answer-bg: #101c30;
+      --chip-bg: #1e293b;
+      --chip-active: #2563eb;
+      --menu-bg: #192339;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --input-bg: #f8fafc;
+      --text-color: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --answer-bg: #eff6ff;
+      --chip-bg: #e2e8f0;
+      --chip-active: #2563eb;
+      --menu-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      touch-action: manipulation;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* هدر */
+
+    .header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 2px;
+    }
+
+    .header-title {
+      padding: 0 8px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* منوی سه‌خط */
+
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 54px;
+      left: 0;
+      z-index: 1000;
+      width: 225px;
+      padding: 6px;
+      overflow: hidden;
+      background: var(--menu-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .menu-dropdown.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu-item {
+      width: 100%;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: transparent;
+      color: var(--text-color);
+      border: none;
+      border-radius: 9px;
+      font-size: 0.9rem;
+      text-align: right;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item:active {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    .status-badge {
+      min-width: 49px;
+      padding: 3px 8px;
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--text-muted);
+      border-radius: 7px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .status-badge.on {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    /* شمارنده */
+
+    .stats-card {
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .badge-count {
+      min-width: 35px;
+      padding: 2px 10px;
+      background: #4f46e5;
+      color: #ffffff;
+      border-radius: 8px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* فرم */
+
+    .form-card {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      outline: none;
+      font-size: 0.92rem;
+      transition: border-color 0.2s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* دسته‌بندی‌های آماده */
+
+    .quick-chips-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .preset-chip {
+      padding: 5px 9px;
+      background: var(--chip-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .preset-chip.active {
+      background: var(--chip-active);
+      color: #ffffff;
+      border-color: var(--chip-active);
+      font-weight: 700;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 3px;
+      padding: 12px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    /* پشتیبان */
+
+    .backup-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-backup {
+      min-height: 42px;
+      padding: 9px 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed var(--border-color);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-backup:hover,
+    .btn-backup:active {
+      color: var(--text-color);
+      border-color: var(--primary);
+    }
+
+    /* جست‌وجو */
+
+    .search-bar {
+      position: relative;
+    }
+
+    .search-bar input {
+      padding-left: 40px;
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 13px;
+      transform: translateY(-50%);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    /* فیلتر دسته‌ها */
+
+    .filter-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 1px 0 5px;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+
+    .filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      flex: 0 0 auto;
+      padding: 6px 12px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* فهرست کارت‌ها */
+
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .qa-card {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-right: 4px solid var(--primary);
+      border-radius: 14px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .qa-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .qa-title-wrap {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .emoji-icon {
+      flex: 0 0 auto;
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .qa-question-text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .qa-tools {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tool-btn {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.02rem;
+      cursor: pointer;
+      opacity: 0.82;
+    }
+
+    .tool-btn:hover,
+    .tool-btn:active {
+      background: rgba(148, 163, 184, 0.12);
+      opacity: 1;
+    }
+
+    .tags-container {
+      margin-right: 29px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tag-badge {
+      padding: 3px 8px;
+      background: #4338ca;
+      color: #e0e7ff;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    /* پاسخ */
+
+    .qa-answer-box {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--answer-bg);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+      border-radius: 10px;
+    }
+
+    .qa-answer-content {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .qa-answer-text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .btn-copy {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.74rem;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .btn-copy:hover,
+    .btn-copy:active {
+      color: var(--text-color);
+      border-color: var(--primary);
+    }
+
+    /* حالت آزمون */
+
+    .test-hidden-answer {
+      filter: blur(5px);
+      user-select: none;
+      cursor: pointer;
+      transition: filter 0.2s ease;
+    }
+
+    .test-hidden-answer.revealed {
+      filter: none;
+      user-select: text;
+    }
+
+    /* پیام فهرست خالی */
+
+    .empty-message {
+      padding: 28px 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 9px;
+      }
+
+      .header-title {
+        font-size: 1.1rem;
+      }
+
+      .form-card {
+        padding: 12px;
+      }
+
+      .qa-card {
+        padding: 11px;
+      }
+
+      .qa-tools {
+        gap: 1px;
+      }
+
+      .tool-btn {
+        width: 28px;
+      }
+
+      .btn-backup {
+        font-size: 0.74rem;
+      }
+    }
+  
+    .license-overlay { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: 20px; background: rgba(9, 15, 26, .94); }
+    .license-overlay[hidden] { display: none; }
+    .license-panel { width: min(100%, 390px); padding: 26px; background: #162032; color: #f8fafc; border: 1px solid #334155; border-radius: 12px; box-shadow: 0 18px 55px rgba(0,0,0,.35); }
+    .license-panel h1 { margin: 0 0 8px; font-size: 1.35rem; }
+    .license-panel p { margin: 0 0 20px; color: #94a3b8; font-size: .92rem; }
+    .license-panel label { display: block; margin-bottom: 7px; font-size: .88rem; font-weight: 650; }
+    .license-panel input { direction: ltr; text-align: left; }
+    .license-panel button { width: 100%; margin-top: 12px; padding: 11px; color: white; background: #2563eb; border: 0; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .license-panel button:disabled { opacity: .65; cursor: wait; }
+    .license-message { min-height: 1.4em; margin-top: 12px !important; margin-bottom: 0 !important; color: #fca5a5 !important; }
+    .license-message[role=status] { color: #93c5fd !important; }
+
+  </style>
+</head>
+
+<body>
+
+  <section class="license-overlay" id="licenseOverlay" aria-label="فعال‌سازی مجوز">
+    <form class="license-panel" id="licenseForm">
+      <h1>فعال‌سازی</h1>
+      <p>برای ادامه، کلید مجوز خود را وارد کنید.</p>
+      <label for="licenseKey">License Key</label>
+      <input id="licenseKey" name="code" type="text" autocomplete="off" required aria-describedby="licenseMessage" placeholder="License Key">
+      <button id="activateButton" type="submit">Activate</button>
+      <p class="license-message" id="licenseMessage" role="alert" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <main class="container">
+
+    <!-- هدر -->
+    <header class="header">
+      <button
+        type="button"
+        class="icon-btn"
+        id="themeBtn"
+        title="تغییر تم"
+        aria-label="تغییر تم"
+      >
+        ☀️
+      </button>
+
+      <div class="header-title">حاضر جوابی آلفا</div>
+
+      <button
+        type="button"
+        class="icon-btn"
+        id="menuBtn"
+        title="منو"
+        aria-label="باز کردن منو"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+
+      <div class="menu-dropdown" id="menuDropdown">
+
+        <button type="button" class="menu-item" id="testModeToggle">
+          <span>🎓 حالت آزمون</span>
+          <span class="status-badge" id="testModeBadge">خاموش</span>
+        </button>
+
+        <button type="button" class="menu-item" id="savedModeToggle">
+          <span>🔖 فقط نشانه‌شده‌ها</span>
+          <span class="status-badge" id="savedModeBadge">خاموش</span>
+        </button>
+
+        <button type="button" class="menu-item" id="storyReplyToggle">
+          <span>💬 ریپلای استوری</span>
+          <span class="status-badge" id="storyReplyBadge">خاموش</span>
+        </button>
+
+      </div>
+    </header>
+
+    <!-- شمارنده -->
+    <section class="stats-card">
+      <span>مجموعاً:</span>
+      <span class="badge-count" id="totalCount">0</span>
+    </section>
+
+    <!-- فرم ثبت -->
+    <section class="form-card">
+
+      <input
+        type="text"
+        id="qInput"
+        placeholder="عنوان حاضر جوابی جدید را بنویسید..."
+        autocomplete="off"
+      >
+
+      <textarea
+        id="aInput"
+        placeholder="پاسخ حاضر جوابی جدید را بنویسید..."
+      ></textarea>
+
+      <input
+        type="text"
+        id="categoryInput"
+        placeholder="دسته‌بندی (انتخاب زیر یا تایپ با کاما)"
+        autocomplete="off"
+      >
+
+      <div class="quick-chips-wrapper" id="presetChips">
+        <button type="button" class="preset-chip" data-tag="حاضر جوابی روزمره">
+          حاضر جوابی روزمره
+        </button>
+
+        <button type="button" class="preset-chip" data-tag="نگ">
+          نگ
+        </button>
+
+        <button type="button" class="preset-chip" data-tag="پوش پول">
+          پوش پول
+        </button>
+
+        <button type="button" class="preset-chip" data-tag="شوخی دو پهلو">
+          شوخی دو پهلو
+        </button>
+
+        <button type="button" class="preset-chip" data-tag="ریپلای استوری">
+          ریپلای استوری
+        </button>
+      </div>
+
+      <button type="button" class="btn-submit" id="submitBtn">
+        ثبت
+      </button>
+
+      <div class="backup-actions">
+
+        <button type="button" class="btn-backup" id="downloadBackupBtn">
+          📥 دانلود پشتیبان
+        </button>
+
+        <button type="button" class="btn-backup" id="restoreBackupBtn">
+          📤 بازیابی اطلاعات
+        </button>
+
+        <input
+          type="file"
+          id="fileInput"
+          accept=".json,application/json"
+          hidden
+        >
+
+      </div>
+    </section>
+
+    <!-- جست‌وجو -->
+    <section class="search-bar">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="جستجو در متن سوالات و پاسخ‌ها..."
+        autocomplete="off"
+      >
+
+      <span class="search-icon">🔍</span>
+    </section>
+
+    <!-- فیلتر دسته‌ها -->
+    <nav
+      class="filter-scroll"
+      id="tagFilterBar"
+      aria-label="فیلتر دسته‌بندی‌ها"
+    ></nav>
+
+    <!-- فهرست -->
+    <section class="qa-list" id="qaList"></section>
+
+  </main>
+
+  <script>
+
+    (function () {
+      const endpoint = "https://script.google.com/macros/s/AKfycbyz13irGJAmKY2BHnoVuap_TwQdHj40mLRouopFfSIeV0R9krYjIC_kw1rBKV-F6BbM/exec";
+      const overlay = document.getElementById("licenseOverlay");
+      const form = document.getElementById("licenseForm");
+      const keyInput = document.getElementById("licenseKey");
+      const button = document.getElementById("activateButton");
+      const message = document.getElementById("licenseMessage");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const code = keyInput.value.trim();
+        if (!code) { keyInput.focus(); return; }
+        button.disabled = true;
+        message.setAttribute("role", "status");
+        message.textContent = "در حال بررسی...";
+        try {
+          const url = new URL(endpoint);
+          url.searchParams.set("code", code);
+          const response = await fetch(url.toString(), { method: "GET", redirect: "follow" });
+          if (!response.ok) throw new Error("خطا در ارتباط با سرور (" + response.status + ")");
+          const result = await response.json();
+          if (result && result.success === true) {
+            message.textContent = "";
+            overlay.hidden = true;
+            try { localStorage.setItem("alpha_license_key", code); } catch (_) {}
+          } else {
+            message.setAttribute("role", "alert");
+            message.textContent = result && result.message ? String(result.message) : "فعال‌سازی انجام نشد.";
+          }
+        } catch (error) {
+          message.setAttribute("role", "alert");
+          message.textContent = error instanceof SyntaxError ? "پاسخ سرور معتبر نیست." : (error.message || "خطا در ارتباط با سرور.");
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+
+
+    "use strict";
+
+    const STORAGE_KEY = "alpha_qa_data";
+    const THEME_KEY = "alpha_qa_theme";
+
+    let qaData = loadStoredData();
+    let currentTheme = localStorage.getItem(THEME_KEY) || "dark";
+
+    let isTestMode = false;
+    let isSavedOnly = false;
+    let isStoryOnly = false;
+    let activeTagFilter = "all";
+
+    /*
+      به‌جای نگهداری شماره ردیف، شناسه ثابت آیتم ذخیره می‌شود.
+      بنابراین حذف یا جابه‌جایی آیتم‌ها روی ویرایش اثر اشتباه نمی‌گذارد.
+    */
+    let editingItemId = null;
+
+    const themeBtn = document.getElementById("themeBtn");
+    const menuBtn = document.getElementById("menuBtn");
+    const menuDropdown = document.getElementById("menuDropdown");
+
+    const testModeToggle = document.getElementById("testModeToggle");
+    const testModeBadge = document.getElementById("testModeBadge");
+
+    const savedModeToggle = document.getElementById("savedModeToggle");
+    const savedModeBadge = document.getElementById("savedModeBadge");
+
+    const storyReplyToggle = document.getElementById("storyReplyToggle");
+    const storyReplyBadge = document.getElementById("storyReplyBadge");
+
+    const totalCount = document.getElementById("totalCount");
+
+    const qInput = document.getElementById("qInput");
+    const aInput = document.getElementById("aInput");
+    const categoryInput = document.getElementById("categoryInput");
+    const presetChips = document.getElementById("presetChips");
+    const submitBtn = document.getElementById("submitBtn");
+
+    const searchInput = document.getElementById("searchInput");
+    const tagFilterBar = document.getElementById("tagFilterBar");
+    const qaList = document.getElementById("qaList");
+
+    const downloadBackupBtn = document.getElementById("downloadBackupBtn");
+    const restoreBackupBtn = document.getElementById("restoreBackupBtn");
+    const fileInput = document.getElementById("fileInput");
+
+    /* ساخت شناسه یکتا */
+
+    function createId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === "function"
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        "-" +
+        Math.random().toString(36).slice(2, 10)
+      );
+    }
+
+    /* تبدیل دسته‌بندی‌های قدیمی به ساختار جدید */
+
+    function getItemTags(item) {
+      if (Array.isArray(item.tags)) {
+        return normalizeTags(item.tags);
+      }
+
+      if (typeof item.tag === "string") {
+        return normalizeTags([item.tag]);
+      }
+
+      if (typeof item.category === "string") {
+        return normalizeTags(
+          item.category.split(/[,،]/)
+        );
+      }
+
+      return [];
+    }
+
+    function normalizeTags(tags) {
+      const normalized = tags
+        .map(tag => String(tag || "").trim())
+        .filter(Boolean);
+
+      return [...new Set(normalized)];
+    }
+
+    function normalizeItem(item) {
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const question = String(
+        item.q ?? item.question ?? ""
+      ).trim();
+
+      const answer = String(
+        item.a ?? item.answer ?? ""
+      ).trim();
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return {
+        id: String(item.id || createId()),
+        q: question,
+        a: answer,
+        tags: getItemTags(item),
+        isSaved: Boolean(
+          item.isSaved ?? item.saved ?? false
+        )
+      };
+    }
+
+    /* خواندن امن اطلاعات */
+
+    function loadStoredData() {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+
+        if (!savedData) {
+          return [];
+        }
+
+        const parsedData = JSON.parse(savedData);
+
+        if (!Array.isArray(parsedData)) {
+          return [];
+        }
+
+        return parsedData
+          .map(normalizeItem)
+          .filter(Boolean);
+      } catch (error) {
+        console.error("خطا در خواندن اطلاعات:", error);
+        return [];
+      }
+    }
+
+    /* تم */
+
+    function applyTheme(theme) {
+      currentTheme = theme === "light" ? "light" : "dark";
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        currentTheme
+      );
+
+      themeBtn.textContent =
+        currentTheme === "dark" ? "☀️" : "🌙";
+
+      localStorage.setItem(THEME_KEY, currentTheme);
+
+      const themeColor = document.querySelector(
+        'meta[name="theme-color"]'
+      );
+
+      if (themeColor) {
+        themeColor.setAttribute(
+          "content",
+          currentTheme === "dark" ? "#0d131f" : "#f1f5f9"
+        );
+      }
+    }
+
+    themeBtn.addEventListener("click", function () {
+      applyTheme(
+        currentTheme === "dark" ? "light" : "dark"
+      );
+    });
+
+    /* منوی سه‌خط */
+
+    function closeMenu() {
+      menuDropdown.classList.remove("active");
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    menuBtn.addEventListener("click", function (event) {
+      event.stopPropagation();
+
+      const isOpen =
+        menuDropdown.classList.toggle("active");
+
+      menuBtn.setAttribute(
+        "aria-expanded",
+        String(isOpen)
+      );
+    });
+
+    menuDropdown.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+
+    document.addEventListener("click", closeMenu);
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    });
+
+    /* وضعیت کلیدهای منو */
+
+    function updateSwitchBadge(badge, enabled) {
+      badge.textContent = enabled ? "روشن" : "خاموش";
+      badge.classList.toggle("on", enabled);
+    }
+
+    testModeToggle.addEventListener("click", function () {
+      isTestMode = !isTestMode;
+      updateSwitchBadge(testModeBadge, isTestMode);
+      renderList();
+    });
+
+    savedModeToggle.addEventListener("click", function () {
+      isSavedOnly = !isSavedOnly;
+      updateSwitchBadge(savedModeBadge, isSavedOnly);
+      renderList();
+    });
+
+    storyReplyToggle.addEventListener("click", function () {
+      isStoryOnly = !isStoryOnly;
+      updateSwitchBadge(storyReplyBadge, isStoryOnly);
+      renderList();
+    });
+
+    /* مدیریت دسته‌بندی‌ها */
+
+    function readCategoryInput() {
+      return normalizeTags(
+        categoryInput.value.split(/[,،]/)
+      );
+    }
+
+    function writeCategoryInput(tags) {
+      categoryInput.value = normalizeTags(tags).join("، ");
+      updateChipStates();
+    }
+
+    function updateChipStates() {
+      const selectedTags = readCategoryInput();
+
+      presetChips
+        .querySelectorAll(".preset-chip")
+        .forEach(function (chip) {
+          const tagName = chip.dataset.tag;
+
+          chip.classList.toggle(
+            "active",
+            selectedTags.includes(tagName)
+          );
+        });
+    }
+
+    presetChips.addEventListener("click", function (event) {
+      const chip = event.target.closest(".preset-chip");
+
+      if (!chip) {
+        return;
+      }
+
+      const tagName = chip.dataset.tag;
+      const currentTags = readCategoryInput();
+      const tagIndex = currentTags.indexOf(tagName);
+
+      if (tagIndex >= 0) {
+        currentTags.splice(tagIndex, 1);
+      } else {
+        currentTags.push(tagName);
+      }
+
+      writeCategoryInput(currentTags);
+    });
+
+    categoryInput.addEventListener(
+      "input",
+      updateChipStates
+    );
+
+    /* ذخیره اطلاعات */
+
+    function saveData() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(qaData)
+        );
+      } catch (error) {
+        console.error("خطا در ذخیره اطلاعات:", error);
+        alert("ذخیره اطلاعات انجام نشد. فضای مرورگر را بررسی کنید.");
+        return;
+      }
+
+      updateStats();
+      validateActiveTag();
+      renderTagFilterBar();
+      renderList();
+    }
+
+    function updateStats() {
+      totalCount.textContent = String(qaData.length);
+    }
+
+    /* پاک‌کردن فرم */
+
+    function resetForm() {
+      editingItemId = null;
+      qInput.value = "";
+      aInput.value = "";
+      categoryInput.value = "";
+      submitBtn.textContent = "ثبت";
+      updateChipStates();
+    }
+
+    /* ثبت یا ویرایش */
+
+    submitBtn.addEventListener("click", function () {
+      const question = qInput.value.trim();
+      const answer = aInput.value.trim();
+      const tags = readCategoryInput();
+
+      if (!question || !answer) {
+        alert("لطفاً عنوان و پاسخ را پر کنید.");
+        return;
+      }
+
+      if (editingItemId !== null) {
+        const itemIndex = qaData.findIndex(
+          item => item.id === editingItemId
+        );
+
+        if (itemIndex === -1) {
+          alert("مورد در حال ویرایش پیدا نشد.");
+          resetForm();
+          renderList();
+          return;
+        }
+
+        qaData[itemIndex] = {
+          ...qaData[itemIndex],
+          q: question,
+          a: answer,
+          tags: tags
+        };
+      } else {
+        qaData.unshift({
+          id: createId(),
+          q: question,
+          a: answer,
+          tags: tags,
+          isSaved: false
+        });
+      }
+
+      resetForm();
+      saveData();
+    });
+
+    /* ثبت با کلیدهای Ctrl + Enter */
+
+    function submitWithKeyboard(event) {
+      if (event.ctrlKey && event.key === "Enter") {
+        event.preventDefault();
+        submitBtn.click();
+      }
+    }
+
+    qInput.addEventListener("keydown", submitWithKeyboard);
+    aInput.addEventListener("keydown", submitWithKeyboard);
+    categoryInput.addEventListener(
+      "keydown",
+      submitWithKeyboard
+    );
+
+    /* نوار فیلتر دسته‌بندی‌ها */
+
+    function collectAllTags() {
+      const allTags = new Set();
+
+      qaData.forEach(function (item) {
+        getItemTags(item).forEach(function (tag) {
+          allTags.add(tag);
+        });
+      });
+
+      return Array.from(allTags).sort(function (a, b) {
+        return a.localeCompare(b, "fa");
+      });
+    }
+
+    function validateActiveTag() {
+      if (activeTagFilter === "all") {
+        return;
+      }
+
+      const availableTags = collectAllTags();
+
+      if (!availableTags.includes(activeTagFilter)) {
+        activeTagFilter = "all";
+      }
+    }
+
+    function createFilterButton(label, value) {
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.className = "filter-btn";
+      button.textContent = label;
+      button.dataset.tag = value;
+
+      if (activeTagFilter === value) {
+        button.classList.add("active");
+      }
+
+      return button;
+    }
+
+    function renderTagFilterBar() {
+      const oldScrollPosition = tagFilterBar.scrollLeft;
+
+      tagFilterBar.replaceChildren();
+
+      tagFilterBar.appendChild(
+        createFilterButton("همه", "all")
+      );
+
+      collectAllTags().forEach(function (tag) {
+        tagFilterBar.appendChild(
+          createFilterButton(tag, tag)
+        );
+      });
+
+      tagFilterBar.scrollLeft = oldScrollPosition;
+    }
+
+    tagFilterBar.addEventListener("click", function (event) {
+      const button = event.target.closest(".filter-btn");
+
+      if (!button) {
+        return;
+      }
+
+      activeTagFilter = button.dataset.tag;
+
+      tagFilterBar
+        .querySelectorAll(".filter-btn")
+        .forEach(function (filterButton) {
+          filterButton.classList.toggle(
+            "active",
+            filterButton === button
+          );
+        });
+
+      renderList();
+    });
+
+    /* جست‌وجو و فیلتر */
+
+    function getFilteredItems() {
+      const query = searchInput.value
+        .trim()
+        .toLocaleLowerCase("fa");
+
+      return qaData.filter(function (item) {
+        const itemTags = getItemTags(item);
+
+        if (isSavedOnly && !item.isSaved) {
+          return false;
+        }
+
+        if (
+          isStoryOnly &&
+          !itemTags.includes("ریپلای استوری")
+        ) {
+          return false;
+        }
+
+        if (
+          activeTagFilter !== "all" &&
+          !itemTags.includes(activeTagFilter)
+        ) {
+          return false;
+        }
+
+        if (!query) {
+          return true;
+        }
+
+        const question = String(item.q || "")
+          .toLocaleLowerCase("fa");
+
+        const answer = String(item.a || "")
+          .toLocaleLowerCase("fa");
+
+        const foundInTags = itemTags.some(function (tag) {
+          return tag
+            .toLocaleLowerCase("fa")
+            .includes(query);
+        });
+
+        return (
+          question.includes(query) ||
+          answer.includes(query) ||
+          foundInTags
+        );
+      });
+    }
+
+    searchInput.addEventListener("input", renderList);
+
+    /* ساخت دکمه ابزار */
+
+    function createToolButton(icon, title, onClick) {
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.className = "tool-btn";
+      button.textContent = icon;
+      button.title = title;
+      button.setAttribute("aria-label", title);
+      button.addEventListener("click", onClick);
+
+      return button;
+    }
+
+    /* ساخت کارت */
+
+    function createQaCard(item) {
+      const card = document.createElement("article");
+      card.className = "qa-card";
+
+      const topRow = document.createElement("div");
+      topRow.className = "qa-top-row";
+
+      const titleWrap = document.createElement("div");
+      titleWrap.className = "qa-title-wrap";
+
+      const womanIcon = document.createElement("span");
+      womanIcon.className = "emoji-icon";
+      womanIcon.textContent = "👩";
+
+      const questionText = document.createElement("div");
+      questionText.className = "qa-question-text";
+      questionText.textContent = item.q;
+
+      titleWrap.append(womanIcon, questionText);
+
+      const tools = document.createElement("div");
+      tools.className = "qa-tools";
+
+      const deleteButton = createToolButton(
+        "🗑️",
+        "حذف",
+        function () {
+          deleteItem(item.id);
+        }
+      );
+
+      const editButton = createToolButton(
+        "✏️",
+        "ویرایش",
+        function () {
+          editItem(item.id);
+        }
+      );
+
+      const saveButton = createToolButton(
+        item.isSaved ? "🔖" : "📑",
+        item.isSaved
+          ? "حذف نشانه‌گذاری"
+          : "نشانه‌گذاری",
+        function () {
+          toggleSave(item.id);
+        }
+      );
+
+      tools.append(
+        deleteButton,
+        editButton,
+        saveButton
+      );
+
+      topRow.append(titleWrap, tools);
+      card.appendChild(topRow);
+
+      const itemTags = getItemTags(item);
+
+      if (itemTags.length > 0) {
+        const tagsContainer = document.createElement("div");
+        tagsContainer.className = "tags-container";
+
+        itemTags.forEach(function (tag) {
+          const badge = document.createElement("span");
+          badge.className = "tag-badge";
+          badge.textContent = tag;
+          tagsContainer.appendChild(badge);
+        });
+
+        card.appendChild(tagsContainer);
+      }
+
+      const answerBox = document.createElement("div");
+      answerBox.className = "qa-answer-box";
+
+      const answerContent = document.createElement("div");
+      answerContent.className = "qa-answer-content";
+
+      const manIcon = document.createElement("span");
+      manIcon.className = "emoji-icon";
+      manIcon.textContent = "👨";
+
+      const answerText = document.createElement("div");
+      answerText.className = "qa-answer-text";
+      answerText.textContent = item.a;
+
+      if (isTestMode) {
+        answerText.classList.add("test-hidden-answer");
+
+        answerText.title =
+          "برای نمایش یا مخفی‌کردن پاسخ لمس کنید";
+
+        answerText.addEventListener("click", function () {
+          answerText.classList.toggle("revealed");
+        });
+      }
+
+      answerContent.append(manIcon, answerText);
+
+      const copyButton = document.createElement("button");
+      copyButton.type = "button";
+      copyButton.className = "btn-copy";
+      copyButton.textContent = "📋 کپی";
+
+      copyButton.addEventListener("click", function () {
+        copyText(item.a);
+      });
+
+      answerBox.append(answerContent, copyButton);
+      card.appendChild(answerBox);
+
+      return card;
+    }
+
+    /* نمایش فهرست */
+
+    function renderList() {
+      const filteredItems = getFilteredItems();
+
+      qaList.replaceChildren();
+
+      if (filteredItems.length === 0) {
+        const emptyMessage = document.createElement("div");
+        emptyMessage.className = "empty-message";
+        emptyMessage.textContent = "موردی یافت نشد.";
+        qaList.appendChild(emptyMessage);
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      filteredItems.forEach(function (item) {
+        fragment.appendChild(createQaCard(item));
+      });
+
+      qaList.appendChild(fragment);
+    }
+
+    /* نشانه‌گذاری */
+
+    function toggleSave(itemId) {
+      const item = qaData.find(
+        currentItem => currentItem.id === itemId
+      );
+
+      if (!item) {
+        return;
+      }
+
+      item.isSaved = !item.isSaved;
+      saveData();
+    }
+
+    /* حذف امن */
+
+    function deleteItem(itemId) {
+      const itemIndex = qaData.findIndex(
+        item => item.id === itemId
+      );
+
+      if (itemIndex === -1) {
+        return;
+      }
+
+      const confirmed = confirm(
+        "آیا از حذف این مورد مطمئن هستید؟"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      if (editingItemId === itemId) {
+        resetForm();
+      }
+
+      qaData.splice(itemIndex, 1);
+      saveData();
+    }
+
+    /* ویرایش امن */
+
+    function editItem(itemId) {
+      const item = qaData.find(
+        currentItem => currentItem.id === itemId
+      );
+
+      if (!item) {
+        alert("این مورد پیدا نشد.");
+        return;
+      }
+
+      editingItemId = item.id;
+      qInput.value = item.q;
+      aInput.value = item.a;
+      writeCategoryInput(getItemTags(item));
+
+      /*
+        متن دکمه همان «ثبت» باقی می‌ماند؛
+        اما اطلاعات روی همان مورد ویرایش‌شده ذخیره می‌شود.
+      */
+      submitBtn.textContent = "ثبت";
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      setTimeout(function () {
+        qInput.focus();
+      }, 300);
+    }
+
+    /* کپی پاسخ */
+
+    async function copyText(text) {
+      try {
+        if (
+          navigator.clipboard &&
+          window.isSecureContext
+        ) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          fallbackCopyText(text);
+        }
+
+        alert("پاسخ کپی شد!");
+      } catch (error) {
+        try {
+          fallbackCopyText(text);
+          alert("پاسخ کپی شد!");
+        } catch (fallbackError) {
+          console.error("خطا در کپی:", fallbackError);
+          alert("کپی پاسخ انجام نشد.");
+        }
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const temporaryTextarea =
+        document.createElement("textarea");
+
+      temporaryTextarea.value = text;
+      temporaryTextarea.setAttribute("readonly", "");
+      temporaryTextarea.style.position = "fixed";
+      temporaryTextarea.style.top = "-9999px";
+      temporaryTextarea.style.opacity = "0";
+
+      document.body.appendChild(temporaryTextarea);
+
+      temporaryTextarea.focus();
+      temporaryTextarea.select();
+      temporaryTextarea.setSelectionRange(
+        0,
+        temporaryTextarea.value.length
+      );
+
+      const copied = document.execCommand("copy");
+      temporaryTextarea.remove();
+
+      if (!copied) {
+        throw new Error("Copy command failed");
+      }
+    }
+
+    /* دانلود پشتیبان */
+
+    downloadBackupBtn.addEventListener(
+      "click",
+      function () {
+        const backupContent = JSON.stringify(
+          qaData,
+          null,
+          2
+        );
+
+        const backupBlob = new Blob(
+          [backupContent],
+          {
+            type: "application/json;charset=utf-8"
+          }
+        );
+
+        const backupUrl =
+          URL.createObjectURL(backupBlob);
+
+        const downloadLink =
+          document.createElement("a");
+
+        const date = new Date()
+          .toISOString()
+          .slice(0, 10);
+
+        downloadLink.href = backupUrl;
+        downloadLink.download =
+          "alpha_backup_" + date + ".json";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+
+        setTimeout(function () {
+          URL.revokeObjectURL(backupUrl);
+        }, 1000);
+      }
+    );
+
+    /* انتخاب فایل بازیابی */
+
+    restoreBackupBtn.addEventListener(
+      "click",
+      function () {
+        fileInput.value = "";
+        fileInput.click();
+      }
+    );
+
+    /* بازیابی اطلاعات */
+
+    fileInput.addEventListener(
+      "change",
+      function (event) {
+        const file = event.target.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (loadEvent) {
+          try {
+            const importedData = JSON.parse(
+              loadEvent.target.result
+            );
+
+            if (!Array.isArray(importedData)) {
+              throw new Error("Invalid backup format");
+            }
+
+            const normalizedData = importedData
+              .map(normalizeItem)
+              .filter(Boolean);
+
+            if (
+              importedData.length > 0 &&
+              normalizedData.length === 0
+            ) {
+              throw new Error("No valid records");
+            }
+
+            const confirmed = confirm(
+              "اطلاعات فعلی با اطلاعات فایل پشتیبان جایگزین شود؟"
+            );
+
+            if (!confirmed) {
+              fileInput.value = "";
+              return;
+            }
+
+            qaData = normalizedData;
+            activeTagFilter = "all";
+            resetForm();
+            saveData();
+
+            alert("اطلاعات با موفقیت بازیابی شد.");
+          } catch (error) {
+            console.error(
+              "خطا در بازیابی اطلاعات:",
+              error
+            );
+
+            alert(
+              "فایل پشتیبان معتبر نیست یا قابل خواندن نیست."
+            );
+          } finally {
+            fileInput.value = "";
+          }
+        };
+
+        reader.onerror = function () {
+          alert("خطا در خواندن فایل.");
+          fileInput.value = "";
+        };
+
+        reader.readAsText(file, "UTF-8");
+      }
+    );
+
+    /* راه‌اندازی اولیه */
+
+    applyTheme(currentTheme);
+    updateSwitchBadge(testModeBadge, isTestMode);
+    updateSwitchBadge(savedModeBadge, isSavedOnly);
+    updateSwitchBadge(storyReplyBadge, isStoryOnly);
+    updateStats();
+    updateChipStates();
+    renderTagFilterBar();
+    renderList();
+
+    /*
+      اطلاعات قدیمی پس از بارگذاری به ساختار جدید تبدیل و ذخیره می‌شوند.
+    */
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(qaData)
+      );
+    } catch (error) {
+      console.error(
+        "خطا در به‌روزرسانی ساختار اطلاعات:",
+        error
+      );
+    }
+  </script>
+</body>
+</html>
